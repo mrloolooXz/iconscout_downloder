@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "IconScout Extension",
+  "version": "1.0.0",
+  "description": "اکستنشن پایه برای IconScout",
+  "permissions": [
+    "activeTab",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "https://iconscout.com/*",
+    "https://*.iconscout.com/*",
+    "https://*.cloudfront.net/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://iconscout.com/*"],
+      "js": ["jquery-3.6.4.min.js", "content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["jquery-3.6.4.min.js"],
+      "matches": ["https://iconscout.com/*"]
+    }
+  ]
+} 
