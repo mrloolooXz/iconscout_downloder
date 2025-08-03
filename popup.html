@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IconScout Downloader</title>
+    <style>
+        body {
+            width: 300px;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 0;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .status {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .status h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status p {
+            margin: 5px 0;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .button:active {
+            transform: translateY(0);
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .info h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .info ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .info li {
+            margin: 3px 0;
+        }
+        
+        .version {
+            text-align: center;
+            font-size: 10px;
+            opacity: 0.6;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 IconScout Downloader</h1>
+        <p>Download animations and images easily</p>
+    </div>
+    
+    <div class="status">
+        <h3>📊 Status</h3>
+        <p id="urlCount">Captured URLs: <span id="count">0</span></p>
+        <p id="status">Extension is active</p>
+    </div>
+    
+    <div class="button-group">
+        <button class="button" id="getUrls">📋 View URLs</button>
+        <button class="button" id="clearUrls">🗑️ Clear URLs</button>
+    </div>
+    
+    <div class="info">
+        <h3>💡 How to use:</h3>
+        <ul>
+            <li>Visit iconscout.com</li>
+            <li>Look for download buttons on animations</li>
+            <li>Click on ID boxes to download JSON files</li>
+            <li>Click on image icons to download images</li>
+        </ul>
+    </div>
+    
+    <div class="version">
+        Version 1.0.0
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html> 

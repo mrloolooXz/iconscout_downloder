@@ -1,11 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "IconScout Extension",
-  "version": "1.0.0",
-  "description": "اکستنشن پایه برای IconScout",
+  "name": "IconScout Downloader Extension",
+  "version": "1.1.0",
+  "description": "Download animations and images from IconScout with ease. This extension adds download buttons to animation and image elements on IconScout.com",
+  "author": "IconScout Downloader",
+  "homepage_url": "https://github.com/your-repo/iconscout-downloader",
   "permissions": [
     "activeTab",
-    "webRequest"
+    "webRequest",
+    "downloads"
   ],
   "host_permissions": [
     "https://iconscout.com/*",
@@ -27,5 +30,9 @@
       "resources": ["jquery-3.6.4.min.js"],
       "matches": ["https://iconscout.com/*"]
     }
-  ]
+  ],
+  "action": {
+    "default_title": "IconScout Downloader",
+    "default_popup": "popup.html"
+  }
 } 

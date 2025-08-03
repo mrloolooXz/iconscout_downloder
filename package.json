@@ -1,0 +1,49 @@
+{
+  "name": "iconscout-downloader-extension",
+  "version": "1.0.0",
+  "description": "A Chrome extension for downloading animations and images from IconScout.com",
+  "main": "background.js",
+  "scripts": {
+    "build": "echo 'Extension is ready to load in Chrome'",
+    "package": "zip -r iconscout-downloader.zip . -x '*.git*' 'node_modules/*' '*.zip'",
+    "test": "echo 'No tests specified' && exit 0"
+  },
+  "keywords": [
+    "chrome-extension",
+    "iconscout",
+    "downloader",
+    "animation",
+    "lottie",
+    "json",
+    "images"
+  ],
+  "author": "IconScout Downloader Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-repo/iconscout-downloader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-repo/iconscout-downloader/issues"
+  },
+  "homepage": "https://github.com/your-repo/iconscout-downloader#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "manifest": {
+    "version": 3,
+    "permissions": [
+      "activeTab",
+      "webRequest",
+      "downloads"
+    ],
+    "host_permissions": [
+      "https://iconscout.com/*",
+      "https://*.iconscout.com/*",
+      "https://*.cloudfront.net/*",
+      "https://*/*"
+    ]
+  }
+} 

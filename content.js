@@ -1,30 +1,30 @@
-// Content Script برای اکستنشن IconScout - فقط باکس‌های ID
+// Content Script for IconScout Extension - ID boxes only
 
-console.log('=== Content Script فعال شد ===');
+console.log('=== Content Script Activated ===');
 
-// تابع استخراج عدد از ID
+// Function to extract number from ID
 function extractNumberFromId(id) {
-    if (!id) return 'بدون ID';
+    if (!id) return 'No ID';
     const match = id.match(/\d+/);
-    return match ? match[0] : 'بدون عدد';
+    return match ? match[0] : 'No Number';
 }
 
-// تابع جستجوی لینک دانلود JSON بر اساس ID
+// Function to search for download JSON link based on ID
 function findDownloadUrl(animationId) {
     return new Promise((resolve) => {
         chrome.runtime.sendMessage({action: 'getUrls'}, (response) => {
             if (response && response.success && response.urls) {
-                // جستجو در URL ها برای پیدا کردن JSON مربوط به این ID
+                // Search URLs to find JSON related to this ID
                 const jsonUrl = response.urls.find(url => 
                     url.includes(animationId) && 
                     (url.includes('.json') || url.includes('application/json'))
                 );
                 
                 if (jsonUrl) {
-                    console.log(`🎯 لینک دانلود برای ID ${animationId}:`, jsonUrl);
+                    console.log(`🎯 Download link for ID ${animationId}:`, jsonUrl);
                     resolve(jsonUrl);
                 } else {
-                    console.log(`❌ لینک دانلود برای ID ${animationId} پیدا نشد`);
+                    console.log(`❌ Download link for ID ${animationId} not found`);
                     resolve(null);
                 }
             } else {
@@ -34,56 +34,54 @@ function findDownloadUrl(animationId) {
     });
 }
 
-// تابع دانلود فایل JSON
+// Function to download JSON file
 function downloadJsonFile(url, filename) {
     const link = document.createElement('a');
     link.href = url;
     link.download = filename || 'animation.json';
-    link.target = '_blank';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    console.log(`📥 دانلود شروع شد: ${filename}`);
+    console.log(`📥 Download started: ${filename}`);
 }
 
-// تابع دانلود فایل عکس
+// Function to download image file
 function downloadImageFile(url, filename) {
     const link = document.createElement('a');
     link.href = url;
     link.download = filename || 'image.jpg';
-    link.target = '_blank';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    console.log(`📥 دانلود عکس شروع شد: ${filename}`);
+    console.log(`📥 Image download started: ${filename}`);
 }
 
-// تابع اضافه کردن لینک دانلود عکس
+// Function to add image download links
 function addImageDownloadLinks() {
     const articles = $('article');
     
     articles.each(function() {
         const article = $(this);
         
-        // اگر قبلاً لینک دانلود عکس اضافه شده، نادیده بگیر
+        // If image download link already added, skip
         if (article.find('.image-download-link').length > 0) {
             return;
         }
         
-        // دنبال تگ picture بگرد
+        // Look for picture tag
         const picture = article.find('picture');
         
         if (picture.length > 0) {
-            // دنبال source یا img داخل picture
+            // Look for source or img inside picture
             let imageUrl = null;
             let imageType = 'jpg';
             
-            // ابتدا source را چک کن
+            // First check source
             const source = picture.find('source');
             if (source.length > 0) {
                 imageUrl = source.attr('srcset') || source.attr('src');
                 if (imageUrl) {
-                    // استخراج نوع فایل از URL
+                    // Extract file type from URL
                     const urlMatch = imageUrl.match(/\.(jpg|jpeg|png|webp|gif|svg)(\?|$)/i);
                     if (urlMatch) {
                         imageType = urlMatch[1];
@@ -91,7 +89,7 @@ function addImageDownloadLinks() {
                 }
             }
             
-            // اگر source نبود، img را چک کن
+            // If no source, check img
             if (!imageUrl) {
                 const img = picture.find('img');
                 if (img.length > 0) {
@@ -105,15 +103,15 @@ function addImageDownloadLinks() {
                 }
             }
             
-            // اگر عکس پیدا شد، لینک دانلود اضافه کن
+            // If image found, add download link
             if (imageUrl) {
-                // استخراج نام فایل از URL
+                // Extract filename from URL
                 const fileName = imageUrl.split('/').pop().split('?')[0] || `image.${imageType}`;
                 
                 const downloadLink = $(`
                     <div class="image-download-link" style="
                         position: absolute;
-                                left: 3px;
+                        left: 3px;
                         background: #30303061;
                         color: white;
                         padding: 0px 6px;
@@ -123,70 +121,70 @@ function addImageDownloadLinks() {
                         top: 4px;
                         cursor: pointer;
                         transition: background 0.2s;
-                    " title="دانلود عکس">
-                        دانلود
+                    " title="Download Image">
+                        Download
                     </div>
                 `);
                 
-                // اضافه کردن کلیک برای دانلود
+                // Add click for download
                 downloadLink.on('click', function() {
-                                            // تغییر ظاهر در حین دانلود
-                        $(this).css('background', '#ff9800').text('در حال...');
+                    // Change appearance during download
+                    $(this).css('background', '#ff9800').text('Downloading...');
                     
                     try {
                         downloadImageFile(imageUrl, fileName);
                         
-                        // نمایش موفقیت
-                        $(this).css('background', '#4CAF50').text('دانلود شد!');
+                        // Show success
+                        $(this).css('background', '#4CAF50').text('Downloaded!');
                         setTimeout(() => {
-                            $(this).css('background', '#30303061').text('دانلود');
+                            $(this).css('background', '#30303061').text('Download');
                         }, 2000);
                     } catch (error) {
-                        console.log('❌ خطا در دانلود عکس:', error);
-                        $(this).css('background', '#f44336').text('خطا');
+                        console.log('❌ Error downloading image:', error);
+                        $(this).css('background', '#f44336').text('Error');
                         setTimeout(() => {
-                            $(this).css('background', '#30303061').text('دانلود');
+                            $(this).css('background', '#30303061').text('Download');
                         }, 2000);
                     }
                 });
                 
-                // اضافه کردن hover effect
+                // Add hover effect
                 downloadLink.on('mouseenter', function() {
                     $(this).css('background', '#404040');
                 }).on('mouseleave', function() {
                     $(this).css('background', '#30303061');
                 });
                 
-                // اطمینان از relative positioning
+                // Ensure relative positioning
                 if (article.css('position') === 'static') {
                     article.css('position', 'relative');
                 }
                 
                 article.append(downloadLink);
-                console.log(`📷 لینک دانلود عکس اضافه شد: ${fileName}`);
+                console.log(`📷 Image download link added: ${fileName}`);
             }
         }
     });
 }
 
-// تابع حذف لینک‌های دانلود عکس
+// Function to remove image download links
 function removeImageDownloadLinks() {
     $('.image-download-link').remove();
 }
 
-// تابع اضافه کردن باکس ID با قابلیت دانلود
+// Function to add ID boxes with download capability
 function addIdBoxes() {
     const allLottiePlayers = $('lottie-player');
     
     allLottiePlayers.each(function(index) {
         const lottie = $(this);
-        const fullId = lottie.attr('id') || 'بدون ID';
+        const fullId = lottie.attr('id') || 'No ID';
         const numberId = extractNumberFromId(fullId);
         
-        // ابتدا article را جستجو کن
+        // First search for article
         let parentElement = lottie.closest('article');
         
-        // اگر article پیدا نکرد، main با کلاس gridContainer را جستجو کن
+        // If article not found, search for main with gridContainer class
         if (parentElement.length === 0) {
             parentElement = lottie.closest('main.gridContainer, main[class*="gridContainer"]');
         }
@@ -206,51 +204,51 @@ function addIdBoxes() {
                         top: 4px;
                         cursor: pointer;
                         transition: background 0.2s;
-                    " title="کلیک برای دانلود JSON">
-                        ${numberId}
+                    " title="Click to download JSON">
+                        Download
                     </div>
                 `);
                 
-                // اضافه کردن کلیک برای دانلود
+                // Add click for download
                 idBox.on('click', async function() {
-                    if (numberId === 'بدون عدد') {
-                        console.log('❌ ID معتبر نیست');
+                    if (numberId === 'No Number') {
+                        console.log('❌ Invalid ID');
                         return;
                     }
                     
-                    // تغییر ظاهر در حین جستجو
-                    $(this).css('background', '#ff9800').text('جستجو...');
+                    // Change appearance during search
+                    $(this).css('background', '#ff9800').text('Searching...');
                     
                     try {
                         const downloadUrl = await findDownloadUrl(numberId);
                         
                         if (downloadUrl) {
-                            // دانلود فایل
+                            // Download file
                             const filename = `animation_${numberId}.json`;
                             downloadJsonFile(downloadUrl, filename);
                             
-                            // نمایش موفقیت
-                            $(this).css('background', '#4CAF50').text('دانلود شد!');
+                            // Show success
+                            $(this).css('background', '#4CAF50').text('Downloaded!');
                             setTimeout(() => {
-                                $(this).css('background', '#30303061').text(numberId);
+                                $(this).css('background', '#30303061').text('Download');
                             }, 2000);
                         } else {
-                            // نمایش خطا
-                            $(this).css('background', '#f44336').text('یافت نشد');
+                            // Show error
+                            $(this).css('background', '#f44336').text('Not Found');
                             setTimeout(() => {
-                                $(this).css('background', '#30303061').text(numberId);
+                                $(this).css('background', '#30303061').text('Download');
                             }, 2000);
                         }
                     } catch (error) {
-                        console.log('❌ خطا در دانلود:', error);
-                        $(this).css('background', '#f44336').text('خطا');
+                        console.log('❌ Download error:', error);
+                        $(this).css('background', '#f44336').text('Error');
                         setTimeout(() => {
-                            $(this).css('background', '#30303061').text(numberId);
+                            $(this).css('background', '#30303061').text('Download');
                         }, 2000);
                     }
                 });
                 
-                // اضافه کردن hover effect
+                // Add hover effect
                 idBox.on('mouseenter', function() {
                     $(this).css('background', '#404040');
                 }).on('mouseleave', function() {
@@ -267,57 +265,57 @@ function addIdBoxes() {
     });
 }
 
-// تابع حذف باکس‌های ID
+// Function to remove ID boxes
 function removeIdBoxes() {
     $('.id-box').remove();
 }
 
-// تابع دریافت URL های ذخیره شده
+// Function to get saved URLs
 function getUrls() {
     chrome.runtime.sendMessage({action: 'getUrls'}, (response) => {
         if (response && response.success) {
-            console.log('📋 URL های ذخیره شده:', response.urls);
-            console.log('📊 تعداد:', response.urls.length);
+            console.log('📋 Saved URLs:', response.urls);
+            console.log('📊 Count:', response.urls.length);
         }
     });
 }
 
-// تابع پاک کردن URL ها
+// Function to clear URLs
 function clearUrls() {
     chrome.runtime.sendMessage({action: 'clearUrls'}, (response) => {
         if (response && response.success) {
-            console.log('🗑️ URL ها پاک شدند');
+            console.log('🗑️ URLs cleared');
         }
     });
 }
 
-// شروع خودکار
+// Auto start
 function startEverything() {
-    console.log('🚀 شروع باکس‌های ID و لینک‌های دانلود عکس...');
+    console.log('🚀 Starting ID boxes and image download links...');
     
-    // اضافه کردن باکس‌های ID
+    // Add ID boxes
     addIdBoxes();
     
-    // اضافه کردن لینک‌های دانلود عکس
+    // Add image download links
     addImageDownloadLinks();
     
-    // اسکن مداوم هر ثانیه
+    // Continuous scan every second
     setInterval(() => {
         addIdBoxes();
         addImageDownloadLinks();
     }, 1000);
     
-    console.log('✅ آماده! باکس‌های ID و لینک‌های دانلود عکس نمایش داده می‌شوند.');
-    console.log('📋 برای دیدن URL ها: getUrls()');
-    console.log('🗑️ برای پاک کردن URL ها: clearUrls()');
-    console.log('💡 کلیک روی باکس‌ها برای دانلود JSON');
-    console.log('📷 کلیک روی آیکون عکس برای دانلود تصویر');
+    console.log('✅ Ready! ID boxes and image download links are displayed.');
+    console.log('📋 To see URLs: getUrls()');
+    console.log('🗑️ To clear URLs: clearUrls()');
+    console.log('💡 Click on boxes to download JSON');
+    console.log('📷 Click on image icon to download image');
 }
 
-// اجرای خودکار
+// Auto execute
 startEverything();
 
-// اضافه کردن به window برای دسترسی از کنسول
+// Add to window for console access
 window.addIdBoxes = addIdBoxes;
 window.removeIdBoxes = removeIdBoxes;
 window.addImageDownloadLinks = addImageDownloadLinks;

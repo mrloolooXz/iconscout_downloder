@@ -1,19 +1,19 @@
-// Background Script برای ردیابی درخواست‌ها
+// Background Script for tracking requests
 
-console.log('=== Background Script فعال شد ===');
+console.log('=== Background Script Activated ===');
 
-// آرایه برای ذخیره URL ها
+// Array to store URLs
 let capturedUrls = [];
 
-// ردیابی شروع درخواست
+// Track request start
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
         if (details.type === 'xmlhttprequest' || details.type === 'main_frame') {
-            // اضافه کردن URL به آرایه (فقط یک بار)
+            // Add URL to array (only once)
             if (!capturedUrls.includes(details.url)) {
                 capturedUrls.push(details.url);
                 console.log(`🔗 ${details.url}`);
-                console.log(`📝 تعداد کل: ${capturedUrls.length}`);
+                console.log(`📝 Total count: ${capturedUrls.length}`);
             }
         }
     },
@@ -25,25 +25,25 @@ chrome.webRequest.onBeforeRequest.addListener(
     ["requestBody"]
 );
 
-// نمایش وضعیت extension
+// Display extension status
 chrome.runtime.onInstalled.addListener(() => {
-    console.log('=== Extension نصب شد ===');
-    console.log('✅ ردیابی URL ها فعال شد');
+    console.log('=== Extension Installed ===');
+    console.log('✅ URL tracking activated');
 });
 
-// اضافه کردن listener برای شروع
+// Add listener for startup
 chrome.runtime.onStartup.addListener(() => {
-    console.log('=== Extension شروع شد ===');
-    console.log('✅ ردیابی URL ها فعال شد');
+    console.log('=== Extension Started ===');
+    console.log('✅ URL tracking activated');
 });
 
-// اضافه کردن message listener برای ارتباط با content script
+// Add message listener for communication with content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'getUrls') {
         sendResponse({success: true, urls: capturedUrls});
     } else if (request.action === 'clearUrls') {
         capturedUrls = [];
-        console.log('🗑️ آرایه URL ها پاک شد');
+        console.log('🗑️ URL array cleared');
         sendResponse({success: true});
     } else {
         sendResponse({success: true});
